@@ -1,7 +1,7 @@
 name: sudoku_game
 description: "Sudoku clasic cu 3 nivele dificultate"
 publish_to: 'none'
-version: 1.0.0+1
+version: 2.0.0+10
 
 environment:
   sdk: ^3.11.1

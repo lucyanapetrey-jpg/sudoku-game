@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../game/sudoku_generator.dart';
+import '../services/rewards_service.dart';
 
 class GameScreen extends StatefulWidget {
   final Difficulty difficulty;
-  const GameScreen({super.key, required this.difficulty});
+  final bool isDaily;
+  final int? seed;
+  const GameScreen({super.key, required this.difficulty, this.isDaily = false, this.seed});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -18,6 +21,7 @@ class _GameScreenState extends State<GameScreen> {
   int _mistakes = 0;
   bool _won = false;
   final List<_Move> _history = [];
+  final _rewards = RewardsService();
 
   @override
   void initState() {
@@ -63,13 +67,41 @@ class _GameScreenState extends State<GameScreen> {
     }
     _won = true;
     _timer?.cancel();
+    final coins = widget.isDaily ? 50 : (widget.difficulty == Difficulty.easy ? 10 : (widget.difficulty == Difficulty.medium ? 25 : 50));
+    _rewards.addCoins(coins);
+    if (widget.isDaily) _rewards.markDailyPuzzleDone();
     Future.microtask(() {
       if (!mounted) return;
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('🎉 Felicitări!'),
-          content: Text('Puzzle complet!\nTimp: ${_fmtTime(_seconds)}\nGreșeli: $_mistakes'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Puzzle complet!\nTimp: ${_fmtTime(_seconds)}\nGreșeli: $_mistakes'),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF8E1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.monetization_on, color: Color(0xFFFFAB00)),
+                    const SizedBox(width: 6),
+                    Text('+$coins coins',
+                        style: const TextStyle(
+                            color: Color(0xFFFF6F00),
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18)),
+                  ],
+                ),
+              ),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () {
