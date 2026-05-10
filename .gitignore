@@ -43,3 +43,9 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+*.aab
+play_screenshots/
+play_feature_graphic.png
+play_icon_512.png
+play_listing.json
+play_metadata.json

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../game/sudoku_generator.dart';
+import '../services/ads_service.dart';
 import '../services/rewards_service.dart';
+import '../widgets/banner_ad_widget.dart';
+import '../widgets/shop_dialog.dart';
 import 'daily_reward_screen.dart';
 import 'game_screen.dart';
 
@@ -35,6 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final c = await _rewards.getCoins();
     final d = await _rewards.isDailyPuzzleDone();
     if (mounted) setState(() { _coins = c; _dailyDone = d; });
+    AdsService.instance.maybeShowInterstitial();
+  }
+
+  void _openShop() {
+    showDialog(
+      context: context,
+      builder: (_) => ShopDialog(onPurchased: _load),
+    );
   }
 
   int get _todaySeed {
@@ -45,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: const BannerAdWidget(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -52,8 +64,34 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Material(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: _openShop,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFF1565C0)),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.shopping_bag, color: Color(0xFF1565C0), size: 20),
+                            SizedBox(width: 6),
+                            Text('Magazin',
+                                style: TextStyle(
+                                    color: Color(0xFF1565C0),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w900)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(

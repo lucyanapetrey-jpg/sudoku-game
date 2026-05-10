@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../game/sudoku_generator.dart';
+import '../services/ads_service.dart';
 import '../services/rewards_service.dart';
+import '../widgets/banner_ad_widget.dart';
 
 class GameScreen extends StatefulWidget {
   final Difficulty difficulty;
@@ -20,6 +22,7 @@ class _GameScreenState extends State<GameScreen> {
   Timer? _timer;
   int _mistakes = 0;
   bool _won = false;
+  int _hintsUsed = 0;
   final List<_Move> _history = [];
   final _rewards = RewardsService();
 
@@ -51,6 +54,50 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  Future<void> _useHint() async {
+    if (_won) return;
+    if (_selR < 0 || _p.given[_selR][_selC]) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selectează o celulă goală')),
+      );
+      return;
+    }
+    if (_hintsUsed == 0) {
+      _applyHint();
+      return;
+    }
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Indiciu suplimentar'),
+        content: const Text('Vezi un scurt videoclip pentru un indiciu gratuit.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Renunță')),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(ctx, true),
+            icon: const Icon(Icons.play_circle_outline),
+            label: const Text('Vezi video'),
+          ),
+        ],
+      ),
+    );
+    if (go != true || !mounted) return;
+    final earned = await AdsService.instance.showRewarded();
+    if (!mounted) return;
+    if (earned) {
+      _applyHint();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Reclama nu e disponibilă acum, încearcă din nou.')),
+      );
+    }
+  }
+
+  void _applyHint() {
+    setState(() => _hintsUsed++);
+    _enter(_p.solution[_selR][_selC]);
+  }
+
   void _undo() {
     if (_history.isEmpty) return;
     setState(() {
@@ -70,6 +117,7 @@ class _GameScreenState extends State<GameScreen> {
     final coins = widget.isDaily ? 50 : (widget.difficulty == Difficulty.easy ? 10 : (widget.difficulty == Difficulty.medium ? 25 : 50));
     _rewards.addCoins(coins);
     if (widget.isDaily) _rewards.markDailyPuzzleDone();
+    AdsService.instance.maybeShowInterstitial();
     Future.microtask(() {
       if (!mounted) return;
       showDialog(
@@ -117,6 +165,7 @@ class _GameScreenState extends State<GameScreen> {
                   _p = SudokuGenerator().generate(widget.difficulty);
                   _seconds = 0;
                   _mistakes = 0;
+                  _hintsUsed = 0;
                   _won = false;
                   _history.clear();
                 });
@@ -147,6 +196,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: const BannerAdWidget(),
       appBar: AppBar(
         title: Text('Sudoku · $_diffLabel'),
         backgroundColor: Colors.transparent,
@@ -293,11 +343,7 @@ class _GameScreenState extends State<GameScreen> {
             children: [
               _actionButton(Icons.undo, 'Înapoi', _undo),
               _actionButton(Icons.backspace_outlined, 'Șterge', () => _enter(0)),
-              _actionButton(Icons.lightbulb_outline, 'Indiciu', () {
-                if (_selR >= 0 && !_p.given[_selR][_selC]) {
-                  _enter(_p.solution[_selR][_selC]);
-                }
-              }),
+              _actionButton(Icons.lightbulb_outline, 'Indiciu', _useHint),
             ],
           ),
         ],
