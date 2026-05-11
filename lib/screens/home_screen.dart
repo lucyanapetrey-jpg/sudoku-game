@@ -116,11 +116,11 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'SUDOKU',
+                  'SUDOKU SUMMER',
                   style: TextStyle(
-                    fontSize: 44,
+                    fontSize: 36,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 4,
+                    letterSpacing: 3,
                     color: Color(0xFF1565C0),
                   ),
                 ),
@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 8),
               const Center(
                 child: Text(
-                  'Puzzle clasic 9×9',
+                  'Number puzzle • 9×9 grid',
                   style: TextStyle(color: Colors.black54),
                 ),
               ),

@@ -1,7 +1,7 @@
 name: sudoku_game
-description: "Sudoku clasic cu 3 nivele dificultate"
+description: "Sudoku Summer - Number puzzle game"
 publish_to: 'none'
-version: 2.3.0+15
+version: 1.0.0+18
 environment:
   sdk: ^3.11.1
 
