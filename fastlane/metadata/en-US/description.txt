@@ -1,0 +1,20 @@
+Sudoku Summer is a classic 9x9 number puzzle game for players who enjoy a relaxing daily challenge.
+
+FEATURES
+- Daily Puzzle: a fresh puzzle every day with a +50 coins reward on completion
+- Three difficulty levels: Easy, Medium, Hard
+- Daily Login Streak: increasing rewards for consecutive days (up to 150 coins on day 7)
+- Coin system: earn coins by playing and spend them in the in-game store
+- In-game store with four coin packs
+- "Remove Ads" in-app purchase
+
+HOW TO PLAY
+Classic Sudoku rules: fill the 9x9 grid so that each row, each column and each 3x3 box contains the digits 1 through 9 with no repetition. Tap a cell, then pick a number from the keypad.
+
+OPTIMIZED FOR iPHONE
+Responsive interface with precise touch controls. Works offline after first launch.
+
+DESIGN
+Summer-inspired palette: shades of blue, orange and green. Clean typography for long, comfortable play sessions.
+
+Made in Romania by Summer Smile Studio.

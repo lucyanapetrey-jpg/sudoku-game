@@ -88,6 +88,16 @@ workflows:
           flutter build ipa --release \
             --build-number=$TESTFLIGHT_BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist
+      - name: Sync App Store Connect metadata via fastlane
+        script: |
+          export APP_STORE_CONNECT_API_KEY_KEY_ID="$APP_STORE_CONNECT_KEY_IDENTIFIER"
+          export APP_STORE_CONNECT_API_KEY_ISSUER_ID="$APP_STORE_CONNECT_ISSUER_ID"
+          export APP_STORE_CONNECT_API_KEY_KEY="$APP_STORE_CONNECT_PRIVATE_KEY"
+          export FASTLANE_HIDE_CHANGELOG=1
+          fastlane deliver \
+            --skip_binary_upload \
+            --skip_screenshots \
+            --force
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
@@ -96,3 +106,6 @@ workflows:
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
+        submit_to_app_store: true
+        release_type: MANUAL
+        cancel_previous_submissions: true

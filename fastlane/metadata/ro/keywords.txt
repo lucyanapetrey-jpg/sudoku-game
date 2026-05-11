@@ -1,0 +1,1 @@
+sudoku,puzzle,numere,creier,zilnic,logica,relax,9x9,offline,joc

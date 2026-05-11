@@ -49,3 +49,10 @@ play_feature_graphic.png
 play_icon_512.png
 play_listing.json
 play_metadata.json
+
+# Fastlane runtime
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+fastlane/README.md

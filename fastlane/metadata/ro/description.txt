@@ -1,0 +1,20 @@
+Sudoku Summer este un joc clasic de numere pe grila 9x9, gandit pentru jucatori care vor un puzzle relaxant zilnic.
+
+FEATURES
+- Puzzle Zilnic: un puzzle unic in fiecare zi, recompensa +50 coins la rezolvare
+- Trei nivele de dificultate: Usor, Mediu, Greu
+- Daily Login Streak: recompense crescatoare pentru zile consecutive (pana la 150 coins in ziua 7)
+- Sistem de coins: colecteaza prin puzzle-uri si foloseste in magazin
+- Magazin in-game cu patru pachete de coins
+- Optiune "Fara reclame" prin In-App Purchase
+
+CUM SE JOACA
+Reguli clasice: completeaza grila 9x9 astfel incat fiecare rand, coloana si cutie 3x3 sa contina numerele 1-9 fara repetare. Atinge o celula si alege numarul.
+
+OPTIMIZAT PENTRU iPHONE
+Interfata responsive cu controale touch precise. Functioneaza offline dupa prima pornire.
+
+DESIGN
+Paleta inspirata din vara: nuante de albastru, portocaliu si verde. Tipografie clara pentru rezolvare indelungata fara oboseala vizuala.
+
+Dezvoltat in Romania de Summer Smile Studio.
