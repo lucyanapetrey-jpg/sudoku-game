@@ -8,9 +8,12 @@ class AdsService {
   AdsService._();
   static final AdsService instance = AdsService._();
 
-  static const String _bannerProd = 'ca-app-pub-5549243085914479/6661262791';
-  static const String _interstitialProd = 'ca-app-pub-5549243085914479/4186758255';
-  static const String _rewardedProd = 'ca-app-pub-5549243085914479/4185775710';
+  static const String _bannerProdAndroid = 'ca-app-pub-5549243085914479/6661262791';
+  static const String _bannerProdIOS = 'ca-app-pub-5549243085914479/4904310061';
+  static const String _interstitialProdAndroid = 'ca-app-pub-5549243085914479/4186758255';
+  static const String _interstitialProdIOS = 'ca-app-pub-5549243085914479/2278146725';
+  static const String _rewardedProdAndroid = 'ca-app-pub-5549243085914479/4185775710';
+  static const String _rewardedProdIOS = 'ca-app-pub-5549243085914479/8025297427';
 
   static const String _bannerTest = 'ca-app-pub-3940256099942544/6300978111';
   static const String _interstitialTest = 'ca-app-pub-3940256099942544/1033173712';
@@ -25,9 +28,9 @@ class AdsService {
   RewardedAd? _rewarded;
   bool _rewardedLoading = false;
 
-  String get bannerUnitId => kDebugMode ? _bannerTest : _bannerProd;
-  String get interstitialUnitId => kDebugMode ? _interstitialTest : _interstitialProd;
-  String get rewardedUnitId => kDebugMode ? _rewardedTest : _rewardedProd;
+  String get bannerUnitId => kDebugMode ? _bannerTest : (Platform.isIOS ? _bannerProdIOS : _bannerProdAndroid);
+  String get interstitialUnitId => kDebugMode ? _interstitialTest : (Platform.isIOS ? _interstitialProdIOS : _interstitialProdAndroid);
+  String get rewardedUnitId => kDebugMode ? _rewardedTest : (Platform.isIOS ? _rewardedProdIOS : _rewardedProdAndroid);
 
   Future<void> initialize() async {
     if (_initialized) return;

@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,7 +13,16 @@ void main() async {
   // connectivity) cannot crash app launch — required after Apple 2.1(a) reject.
   try {
     await PurchaseService.instance.initialize();
-  } catch (_) {}
+  } catch (_) {}  if (Platform.isIOS) {
+    try {
+      final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+      if (status == TrackingStatus.notDetermined) {
+        await Future.delayed(const Duration(milliseconds: 200));
+        await AppTrackingTransparency.requestTrackingAuthorization();
+      }
+    } catch (_) {}
+  }
+
   unawaited(AdsService.instance.initialize());
   runApp(const SudokuApp());
 }
