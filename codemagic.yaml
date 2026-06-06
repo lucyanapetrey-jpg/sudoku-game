@@ -21,6 +21,7 @@ workflows:
         script: dart run flutter_launcher_icons
       - name: Install CocoaPods
         script: |
+          flutter build ios --release --no-codesign --config-only
           cd ios
           pod install --repo-update
       - name: Flutter analyze
@@ -72,6 +73,7 @@ workflows:
         script: dart run flutter_launcher_icons
       - name: Install CocoaPods
         script: |
+          flutter build ios --release --no-codesign --config-only
           cd ios
           pod install --repo-update
       - name: Set TestFlight build number
