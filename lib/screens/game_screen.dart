@@ -23,6 +23,7 @@ class _GameScreenState extends State<GameScreen> {
   int _mistakes = 0;
   bool _won = false;
   int _hintsUsed = 0;
+  int _extraHints = 0;
   final List<_Move> _history = [];
   final _rewards = RewardsService();
 
@@ -66,6 +67,11 @@ class _GameScreenState extends State<GameScreen> {
       _applyHint();
       return;
     }
+    if (_extraHints > 0) {
+      setState(() => _extraHints--);
+      _applyHint();
+      return;
+    }
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -96,6 +102,58 @@ class _GameScreenState extends State<GameScreen> {
   void _applyHint() {
     setState(() => _hintsUsed++);
     _enter(_p.solution[_selR][_selC]);
+  }
+
+  Future<void> _buyExtraHints() async {
+    if (_won) return;
+    final earned = await AdsService.instance.showRewarded();
+    if (!mounted) return;
+    if (earned) {
+      setState(() => _extraHints += 3);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('🎁 +3 indicii adăugate!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Reclama nu e disponibilă acum, încearcă din nou.')),
+      );
+    }
+  }
+
+  Future<void> _skipPuzzleViaAd() async {
+    if (_won) return;
+    final go = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sari peste puzzle'),
+        content: const Text('Vezi un scurt videoclip pentru a marca puzzle-ul ca rezolvat și a primi monede.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Renunță')),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(ctx, true),
+            icon: const Icon(Icons.play_circle_outline),
+            label: const Text('Vezi video'),
+          ),
+        ],
+      ),
+    );
+    if (go != true || !mounted) return;
+    final earned = await AdsService.instance.showRewarded();
+    if (!mounted) return;
+    if (!earned) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Reclama nu e disponibilă acum, încearcă din nou.')),
+      );
+      return;
+    }
+    setState(() {
+      for (var i = 0; i < 9; i++) {
+        for (var j = 0; j < 9; j++) {
+          _p.puzzle[i][j] = _p.solution[i][j];
+        }
+      }
+    });
+    _checkWin();
   }
 
   void _undo() {
@@ -166,6 +224,7 @@ class _GameScreenState extends State<GameScreen> {
                   _seconds = 0;
                   _mistakes = 0;
                   _hintsUsed = 0;
+                  _extraHints = 0;
                   _won = false;
                   _history.clear();
                 });
@@ -200,6 +259,13 @@ class _GameScreenState extends State<GameScreen> {
       appBar: AppBar(
         title: Text('Sudoku · $_diffLabel'),
         backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            tooltip: 'Sari peste puzzle (reclamă)',
+            icon: const Icon(Icons.skip_next),
+            onPressed: _won ? null : _skipPuzzleViaAd,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -343,7 +409,9 @@ class _GameScreenState extends State<GameScreen> {
             children: [
               _actionButton(Icons.undo, 'Înapoi', _undo),
               _actionButton(Icons.backspace_outlined, 'Șterge', () => _enter(0)),
-              _actionButton(Icons.lightbulb_outline, 'Indiciu', _useHint),
+              _actionButton(Icons.lightbulb_outline,
+                  _extraHints > 0 ? 'Indiciu ($_extraHints)' : 'Indiciu', _useHint),
+              _actionButton(Icons.ondemand_video, '💡 +3 reclamă', _buyExtraHints),
             ],
           ),
         ],
